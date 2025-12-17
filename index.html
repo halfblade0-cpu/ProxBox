@@ -299,7 +299,7 @@
         <div class="header-content">
             <div class="logo">ProxBox</div>
             <nav>
-                <a href="#games">Games</a>
+                <a href="#" onclick="showGames(); return false;">Games</a>
                 <a href="#partners">Partners</a>
                 <a href="#suggestions">Suggestions</a>
                 <a href="#about">About</a>
@@ -337,7 +337,7 @@
         <div class="container">
             <h2 class="section-title">Ready to Play?</h2>
             <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; padding: 2rem 0;">
-                <a href="#" class="btn-primary" style="display: inline-block; font-size: 1.3rem; padding: 1.5rem 3rem;">
+                <a href="#" onclick="showGames(); return false;" class="btn-primary" style="display: inline-block; font-size: 1.3rem; padding: 1.5rem 3rem;">
                     🎮 Browse Games
                 </a>
                 <a href="https://discord.gg/kUfWWHQn" target="_blank" class="btn-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.3rem; padding: 1.5rem 3rem;">
@@ -349,6 +349,71 @@
             </div>
         </div>
     </section>
+
+    <section id="games-page" style="display: none; padding: 4rem 0;">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem;">
+                <h2 class="section-title" style="margin: 0;">All Games</h2>
+                <button onclick="hideGames()" class="btn-secondary" style="padding: 0.75rem 1.5rem;">← Back to Home</button>
+            </div>
+            <div class="games-grid">
+                <div class="game-card">
+                    <div class="game-icon">🎮</div>
+                    <h3>Game Title 1</h3>
+                    <p>An exciting adventure awaits in this action-packed game</p>
+                    <button class="btn-primary" style="margin-top: 1rem; padding: 0.5rem 1.5rem; font-size: 0.9rem;">Play Now</button>
+                </div>
+                <div class="game-card">
+                    <div class="game-icon">🧩</div>
+                    <h3>Game Title 2</h3>
+                    <p>Challenge your mind with this brain-teasing puzzle</p>
+                    <button class="btn-primary" style="margin-top: 1rem; padding: 0.5rem 1.5rem; font-size: 0.9rem;">Play Now</button>
+                </div>
+                <div class="game-card">
+                    <div class="game-icon">🏎️</div>
+                    <h3>Game Title 3</h3>
+                    <p>Race to victory in this high-speed racing experience</p>
+                    <button class="btn-primary" style="margin-top: 1rem; padding: 0.5rem 1.5rem; font-size: 0.9rem;">Play Now</button>
+                </div>
+                <div class="game-card">
+                    <div class="game-icon">⚔️</div>
+                    <h3>Game Title 4</h3>
+                    <p>Embark on an epic quest in this RPG adventure</p>
+                    <button class="btn-primary" style="margin-top: 1rem; padding: 0.5rem 1.5rem; font-size: 0.9rem;">Play Now</button>
+                </div>
+                <div class="game-card">
+                    <div class="game-icon">🎯</div>
+                    <h3>Game Title 5</h3>
+                    <p>Test your strategy skills in tactical gameplay</p>
+                    <button class="btn-primary" style="margin-top: 1rem; padding: 0.5rem 1.5rem; font-size: 0.9rem;">Play Now</button>
+                </div>
+                <div class="game-card">
+                    <div class="game-icon">👾</div>
+                    <h3>Game Title 6</h3>
+                    <p>Battle aliens in this retro arcade shooter</p>
+                    <button class="btn-primary" style="margin-top: 1rem; padding: 0.5rem 1.5rem; font-size: 0.9rem;">Play Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function showGames() {
+            document.getElementById('games').style.display = 'none';
+            document.querySelector('.hero').style.display = 'none';
+            document.querySelector('.stats-section').style.display = 'none';
+            document.getElementById('games-page').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        function hideGames() {
+            document.getElementById('games-page').style.display = 'none';
+            document.getElementById('games').style.display = 'block';
+            document.querySelector('.hero').style.display = 'block';
+            document.querySelector('.stats-section').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+    </script>
 
     <footer>
         <div class="container">
