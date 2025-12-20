@@ -1,333 +1,471 @@
-import React, { useState } from 'react';
-import { Gamepad2, Users, MessageSquare, Home, Maximize2, X } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vines - Gaming Community</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-export default function AvalancheGaming() {
-  const [activeTab, setActiveTab] = useState('home');
-  const [fullscreenGame, setFullscreenGame] = useState(null);
-  
-  // Example games - you can add your own game HTML and CSS here
-  const games = [
-    {
-    {
-  id: 1,
-  title: "Snow Rider 3D",
-  thumbnail: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=300&fit=crop",
-  html: `
-    <div class="webgl-content">
-      <div id="gameContainer" style="width: 100vw; height: 100vh; margin: 0"></div>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a1f0f 0%, #1a3a1f 50%, #0f2615 100%);
+            color: #e8f5e9;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Jungle vine decorations */
+        .vine-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            opacity: 0.05;
+            background-image: 
+                repeating-linear-gradient(90deg, transparent, transparent 100px, #2e7d32 100px, #2e7d32 102px),
+                repeating-linear-gradient(0deg, transparent, transparent 100px, #1b5e20 100px, #1b5e20 102px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        header {
+            background: rgba(13, 31, 18, 0.95);
+            padding: 1.5rem 2rem;
+            border-bottom: 3px solid #2e7d32;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(46, 125, 50, 0.3);
+        }
+
+        nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #66bb6a;
+            text-shadow: 0 0 20px rgba(102, 187, 106, 0.5);
+            letter-spacing: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #a5d6a7;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #66bb6a;
+            background: rgba(46, 125, 50, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .discord-btn {
+            background: white;
+            color: #2e7d32;
+            padding: 0.8rem 1.5rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 187, 106, 0.3);
+        }
+
+        .discord-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(102, 187, 106, 0.5);
+            background: #f1f8f4;
+        }
+
+        .discord-icon {
+            width: 28px;
+            height: 28px;
+        }
+
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(27, 94, 32, 0.3);
+            border-radius: 20px;
+            margin-bottom: 4rem;
+            border: 2px solid #2e7d32;
+            box-shadow: 0 8px 32px rgba(46, 125, 50, 0.2);
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            color: #66bb6a;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 30px rgba(102, 187, 106, 0.6);
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: #a5d6a7;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .content-section {
+            background: rgba(27, 94, 32, 0.2);
+            padding: 3rem;
+            border-radius: 20px;
+            margin-bottom: 3rem;
+            border: 2px solid #2e7d32;
+            backdrop-filter: blur(10px);
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-section h2 {
+            font-size: 2.5rem;
+            color: #66bb6a;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 20px rgba(102, 187, 106, 0.4);
+        }
+
+        .content-section p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #c8e6c9;
+            margin-bottom: 1rem;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .game-card {
+            background: rgba(13, 31, 18, 0.8);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid #2e7d32;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.2);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 30px rgba(102, 187, 106, 0.4);
+            border-color: #66bb6a;
+        }
+
+        .game-card h3 {
+            color: #66bb6a;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        footer {
+            background: rgba(13, 31, 18, 0.95);
+            padding: 2rem;
+            text-align: center;
+            border-top: 3px solid #2e7d32;
+            margin-top: 4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        footer p {
+            color: #a5d6a7;
+            font-size: 1rem;
+        }
+
+        /* Fallout Game Overlay */
+        #fallout-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: black;
+            z-index: 1000;
+        }
+
+        #fallout-overlay.active {
+            display: block;
+        }
+
+        #fallout-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #66bb6a;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            z-index: 1001;
+        }
+
+        #fallout-close:hover {
+            background: #4CAF50;
+        }
+
+        #fallout-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-family: monospace;
+            font-size: 20px;
+            color: #fedb1d;
+        }
+
+        #fallout-progress {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        #fallout-canvas {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: auto;
+            height: 100%;
+            background: black;
+            transform: translate(-50%, -50%);
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="vine-bg"></div>
+    
+    <header>
+        <nav>
+            <div class="logo">🌿 VINES</div>
+            <div class="nav-links">
+                <a href="#" onclick="showSection('home')">Home</a>
+                <a href="#" onclick="showSection('gaming')">Gaming</a>
+                <a href="#" onclick="showSection('partners')">Partners</a>
+                <a href="https://discord.gg/5GmrCaAN" target="_blank" class="discord-btn">
+                    <svg class="discord-icon" viewBox="0 0 127.14 96.36" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#4CAF50" d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+                    </svg>
+                    Join The Discord
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div id="home" class="content-section active">
+            <div class="hero">
+                <h1>Welcome to Vines</h1>
+            </div>
+            
+            <div style="text-align: center; padding: 2rem;">
+                <h2 style="color: #66bb6a; font-size: 2rem; margin-bottom: 1rem;">Join Our Thriving Community</h2>
+            </div>
+        </div>
+
+        <div id="gaming" class="content-section">
+            <h2>🎮 Gaming Hub</h2>
+            <p>Explore our diverse gaming community across multiple titles and platforms. From competitive esports to casual co-op, there's something for every type of player.</p>
+            
+            <div class="game-grid">
+                <div class="game-card">
+                    <h3>🔫 FPS Division</h3>
+                    <p>Join our competitive shooters team. We play Valorant, CS2, and Apex Legends with daily scrims and tournaments.</p>
+                </div>
+                <div class="game-card">
+                    <h3>⚔️ RPG Guild</h3>
+                    <p>Embark on epic adventures together. Active in Final Fantasy XIV, WoW, and various co-op RPGs.</p>
+                </div>
+                <div class="game-card">
+                    <h3>🏆 Competitive League</h3>
+                    <p>Climb the ranks with our competitive squads. Team-based strategy games and ranked matches daily.</p>
+                </div>
+                <div class="game-card">
+                    <h3>🎲 Casual Corner</h3>
+                    <p>Relax and have fun with party games, indie titles, and weekly game nights with the community.</p>
+                </div>
+                <div class="game-card" onclick="openFallout()" style="cursor: pointer;">
+                    <h3>☢️ Play Fallout</h3>
+                    <p>Experience the classic post-apocalyptic RPG right in your browser. Click to launch!</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="partners" class="content-section">
+            <h2>🤝 Our Partners</h2>
+            <p>Vines is proud to collaborate with amazing content creators, gaming organizations, and brands that share our passion for building great communities.</p>
+            
+            <div class="game-grid">
+                <div class="game-card">
+                    <h3>This could be your site</h3>
+                    <p>Partner with us to reach our engaged gaming community and grow together.</p>
+                </div>
+                <div class="game-card">
+                    <h3>This could be your site</h3>
+                    <p>Join our partnership program and get featured here with exclusive benefits.</p>
+                </div>
+                <div class="game-card">
+                    <h3>This could be your site</h3>
+                    <p>Collaborate with Vines and connect with passionate gamers worldwide.</p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 3rem; padding: 2rem; background: rgba(13, 31, 18, 0.6); border-radius: 15px; border: 2px solid #2e7d32;">
+                <h3 style="color: #66bb6a; font-size: 2rem; margin-bottom: 1rem;">Interested in Partnering?</h3>
+                <p style="color: #c8e6c9; font-size: 1.1rem;">We're always looking to collaborate with like-minded creators and organizations. Reach out on Discord to discuss partnership opportunities!</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 Vines Gaming Community. All rights reserved. 🌿</p>
+    </footer>
+
+    <!-- Fallout Game Overlay -->
+    <div id="fallout-overlay">
+        <button id="fallout-close" onclick="closeFallout()">✕ Close Game</button>
+        <div id="fallout-loading">
+            <div>Loading Fallout...</div>
+            <div id="fallout-progress">Merging archive parts: 0%</div>
+        </div>
+        <canvas id="fallout-canvas" onClick="window.focus();" />
     </div>
-    <script
-      src="https://cdn.jsdelivr.net/gh/Vrkids2009/snowrider3d@6b7c2b9167b592528b221428414e63f06c4640b9/TemplateData/UnityProgress.js">
-    </script>
-    <script
-      src="https://cdn.jsdelivr.net/gh/Vrkids2009/snowrider3d@6b7c2b9167b592528b221428414e63f06c4640b9/Build/UnityLoader.js">
-    </script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/bubbls/dosbox/js/es6-promise.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/bubbls/dosbox/js/browserfs.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/bubbls/dosbox/js/loader.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
     <script>
-      var gameInstance = UnityLoader.instantiate("gameContainer", "https://cdn.jsdelivr.net/gh/Vrkids2009/snowrider3d@6b7c2b9167b592528b221428414e63f06c4640b9/Build/SnowRider3D-gd-1.json", {onProgress: UnityProgress, Module:{onRuntimeInitialized: function() {UnityProgress(gameInstance, "complete")}}});
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function openFallout() {
+            document.getElementById('fallout-overlay').classList.add('active');
+            loadAndMergeZipParts();
+        }
+
+        function closeFallout() {
+            document.getElementById('fallout-overlay').classList.remove('active');
+            location.reload(); // Reload to reset the game
+        }
+
+        async function loadAndMergeZipParts() {
+            const PARTS_FOLDER = 'https://cdn.jsdelivr.net/gh/bubbls/dosbox/softs/fallout/';  
+            const BASE_FILENAME = 'fallout.zip';   
+            const NUM_PARTS = 23;
+
+            const progressEl = document.getElementById('fallout-progress');
+            const loadingEl = document.getElementById('fallout-loading');
+            
+            try {
+                const chunks = [];
+                
+                for (let i = 1; i <= NUM_PARTS; i++) {
+                    progressEl.textContent = `Loading part ${i}/${NUM_PARTS}...`;
+                    
+                    const partNum = i.toString().padStart(2, '0');
+                    const partUrl = `${PARTS_FOLDER}${BASE_FILENAME}.part${partNum}`;
+                    const response = await fetch(partUrl);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Failed to load ${partUrl}: ${response.status}`);
+                    }
+                    
+                    const arrayBuffer = await response.arrayBuffer();
+                    chunks.push(arrayBuffer);
+                    
+                    const progress = Math.round((i / NUM_PARTS) * 100);
+                    progressEl.textContent = `Merging archive parts: ${progress}%`;
+                }
+                
+                progressEl.textContent = 'Merging complete! Starting emulator...';
+                const mergedBlob = new Blob(chunks, { type: 'application/zip' });
+                const blobUrl = URL.createObjectURL(mergedBlob);
+                
+                loadingEl.style.display = 'none';
+                document.getElementById('fallout-canvas').style.display = 'block';
+                
+                startEmulator(blobUrl);
+                
+            } catch (error) {
+                progressEl.textContent = `Error: ${error.message}`;
+                console.error('Failed to load game:', error);
+            }
+        }
+
+        function startEmulator(zipUrl) {
+            var dosbox = new Emulator(document.querySelector("#fallout-canvas"),
+                null,
+                new DosBoxLoader(DosBoxLoader.emulatorJS("https://cdn.jsdelivr.net/gh/bubbls/dosbox/js/dosbox-sync.js"),
+                    DosBoxLoader.locateAdditionalEmulatorJS(locateAdditionalFiles),
+                    DosBoxLoader.nativeResolution(640, 400),
+                    DosBoxLoader.mountZip("c",
+                        DosBoxLoader.fetchFile("Software", zipUrl)),
+                    DosBoxLoader.startExe('FALLOUT/FALLOUT.EXE')));
+            dosbox.start({
+                waitAfterDownloading: false
+            });
+
+            function locateAdditionalFiles(filename) {
+                if (filename === "dosbox.html.mem") {
+                    return "https://cdn.jsdelivr.net/gh/bubbls/dosbox/js/dosbox-sync.mem";
+                }
+                return "https://cdn.jsdelivr.net/gh/bubbls/dosbox/js/" + filename;
+            }
+        }
     </script>
-  `,
-  css: `
-    @import url('https://cdn.jsdelivr.net/gh/Vrkids2009/snowrider3d@6b7c2b9167b592528b221428414e63f06c4640b9/TemplateData/style.css');
-    body { 
-      margin: 0; 
-      padding: 0; 
-      overflow: hidden;
-    }
-    .webgl-content {
-      width: 100vw;
-      height: 100vh;
-    }
-  `
-}
-      css: `
-        body { margin: 0; background: #0f172a; font-family: Arial; }
-        .game-container { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; color: white; }
-      `
-    },
-    {
-      id: 3,
-      title: "Game Title 3",
-      thumbnail: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=400&h=300&fit=crop",
-      html: `
-        <div style="text-align: center; padding-top: 20vh;">
-          <h1 style="color: cyan;">Game 3</h1>
-        </div>
-      `,
-      css: `
-        body { margin: 0; background: black; }
-      `
-    },
-  ];
-
-  const GameCard = ({ game }) => (
-    <div className="bg-gradient-to-br from-blue-900/40 to-purple-900/40 backdrop-blur-sm rounded-lg overflow-hidden border border-blue-400/30 hover:border-blue-400/60 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/20">
-      <div className="relative h-48 overflow-hidden">
-        <img src={game.thumbnail} alt={game.title} className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-      </div>
-      <div className="p-4">
-        <h3 className="text-xl font-bold text-white mb-3">{game.title}</h3>
-        <button
-          onClick={() => setFullscreenGame(game)}
-          className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 flex items-center justify-center gap-2"
-        >
-          <Gamepad2 size={18} />
-          Play Now
-        </button>
-      </div>
-    </div>
-  );
-
-  const FullscreenGame = ({ game, onClose }) => {
-    const gameContent = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <style>
-            ${game.css || ''}
-          </style>
-        </head>
-        <body>
-          ${game.html || ''}
-        </body>
-      </html>
-    `;
-
-    return (
-      <div className="fixed inset-0 z-50 bg-black">
-        <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent p-4 flex items-center justify-between z-10">
-          <h2 className="text-2xl font-bold text-white">{game.title}</h2>
-          <button
-            onClick={onClose}
-            className="bg-red-500 hover:bg-red-600 text-white p-2 rounded-lg transition-all"
-          >
-            <X size={24} />
-          </button>
-        </div>
-        <iframe 
-          srcDoc={gameContent}
-          className="w-full h-full border-0" 
-          title={game.title}
-        />
-      </div>
-    );
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 relative overflow-hidden">
-      {/* Animated Avalanche Effect */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(100)].map((_, i) => {
-          const size = Math.random() * 8 + 3;
-          const startX = Math.random() * 120 - 10;
-          const endX = startX + (Math.random() * 40 - 20);
-          const duration = Math.random() * 4 + 3;
-          const delay = Math.random() * 5;
-          
-          return (
-            <div
-              key={i}
-              className="absolute bg-white rounded-full opacity-70"
-              style={{
-                left: `${startX}%`,
-                top: '-20px',
-                width: `${size}px`,
-                height: `${size}px`,
-                animation: `avalanche ${duration}s linear ${delay}s infinite`,
-                boxShadow: '0 0 10px rgba(255, 255, 255, 0.5)',
-              }}
-            />
-          );
-        })}
-        <style>{`
-          @keyframes avalanche {
-            0% {
-              transform: translateY(0) translateX(0) rotate(0deg);
-              opacity: 0;
-            }
-            10% {
-              opacity: 0.7;
-            }
-            90% {
-              opacity: 0.7;
-            }
-            100% {
-              transform: translateY(100vh) translateX(${Math.random() * 200 - 100}px) rotate(720deg);
-              opacity: 0;
-            }
-          }
-        `}</style>
-      </div>
-
-      {/* Header */}
-      <header className="relative z-10 bg-gradient-to-r from-blue-950/80 to-purple-950/80 backdrop-blur-md border-b border-blue-400/30 shadow-lg">
-        <div className="container mx-auto px-6 py-6">
-          <h1 className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-cyan-300 to-blue-300 drop-shadow-lg">
-            ❄️ AVALANCHE
-          </h1>
-        </div>
-      </header>
-
-      {/* Navigation */}
-      <nav className="relative z-10 bg-gradient-to-r from-blue-900/60 to-purple-900/60 backdrop-blur-md border-b border-blue-400/20">
-        <div className="container mx-auto px-6">
-          <div className="flex gap-2">
-            {[
-              { id: 'home', label: 'Home', icon: Home },
-              { id: 'games', label: 'Games', icon: Gamepad2 },
-              { id: 'partners', label: 'Partners', icon: Users },
-              { id: 'suggestions', label: 'Suggestions', icon: MessageSquare }
-            ].map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-4 font-semibold transition-all duration-300 ${
-                  activeTab === tab.id
-                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-b-4 border-cyan-300'
-                    : 'text-blue-200 hover:bg-blue-800/40 hover:text-white'
-                }`}
-              >
-                <tab.icon size={20} />
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <main className="relative z-10 container mx-auto px-6 py-12">
-        {activeTab === 'home' && (
-          <div className="text-center">
-            <div className="bg-gradient-to-br from-blue-900/60 to-purple-900/60 backdrop-blur-lg rounded-2xl p-12 border border-blue-400/30 shadow-2xl">
-              <h2 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-cyan-300 mb-6">
-                Welcome to Avalanche
-              </h2>
-              <p className="text-blue-100 text-xl mb-8 max-w-2xl mx-auto leading-relaxed">
-                Welcome to Avalanche unknown user, we hope you enjoy our site!
-              </p>
-              <div className="flex gap-4 justify-center">
-                <button
-                  onClick={() => setActiveTab('games')}
-                  className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold py-4 px-8 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
-                >
-                  Browse Games
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'games' && (
-          <div>
-            <h2 className="text-4xl font-bold text-white mb-8 flex items-center gap-3">
-              <Gamepad2 className="text-cyan-400" size={40} />
-              Game Library
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {games.map(game => (
-                <GameCard key={game.id} game={game} />
-              ))}
-            </div>
-            <div className="mt-12 bg-blue-900/40 backdrop-blur-sm border border-blue-400/30 rounded-lg p-6">
-              <h3 className="text-2xl font-bold text-white mb-4">📝 How to Add Games</h3>
-              <p className="text-blue-100 mb-4">
-                To add your own games, edit the <code className="bg-black/40 px-2 py-1 rounded">games</code> array in the code. You can add HTML and CSS directly:
-              </p>
-              <pre className="bg-black/60 text-cyan-300 p-4 rounded-lg overflow-x-auto text-sm">
-{`{
-  id: 4,
-  title: "Your Game Name",
-  thumbnail: "image-url-here",
-  html: \`
-    <div class="game">
-      <h1>My Game</h1>
-      <canvas id="gameCanvas"></canvas>
-    </div>
-  \`,
-  css: \`
-    body { margin: 0; background: black; }
-    .game { text-align: center; color: white; }
-    #gameCanvas { border: 2px solid white; }
-  \`
-}`}
-              </pre>
-              <p className="text-blue-100 mt-4">
-                Add your HTML in the <code className="bg-black/40 px-2 py-1 rounded">html</code> field and CSS in the <code className="bg-black/40 px-2 py-1 rounded">css</code> field. The game will load in fullscreen when clicked!
-              </p>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'partners' && (
-          <div>
-            <h2 className="text-4xl font-bold text-white mb-8 flex items-center gap-3">
-              <Users className="text-cyan-400" size={40} />
-              Our Partners
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="bg-gradient-to-br from-blue-900/40 to-purple-900/40 backdrop-blur-sm rounded-lg p-8 border border-blue-400/30 hover:border-blue-400/60 transition-all">
-                  <h3 className="text-2xl font-bold text-white mb-2">Partner Name {i}</h3>
-                  <p className="text-blue-200 mb-4">Description of partner and what they provide.</p>
-                  <a href="#" className="text-cyan-400 hover:text-cyan-300 font-semibold">Visit Partner →</a>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'suggestions' && (
-          <div>
-            <h2 className="text-4xl font-bold text-white mb-8 flex items-center gap-3">
-              <MessageSquare className="text-cyan-400" size={40} />
-              Game Suggestions
-            </h2>
-            <div className="bg-gradient-to-br from-blue-900/40 to-purple-900/40 backdrop-blur-sm rounded-lg p-8 border border-blue-400/30 max-w-2xl mx-auto">
-              <p className="text-blue-100 mb-6 text-lg">
-                Have a game you'd like to see on Avalanche? Let us know!
-              </p>
-              <form className="space-y-4">
-                <div>
-                  <label className="block text-white font-semibold mb-2">Your Name</label>
-                  <input
-                    type="text"
-                    className="w-full bg-blue-950/60 border border-blue-400/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-400"
-                    placeholder="Enter your name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-white font-semibold mb-2">Game Suggestion</label>
-                  <input
-                    type="text"
-                    className="w-full bg-blue-950/60 border border-blue-400/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-400"
-                    placeholder="Game name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-white font-semibold mb-2">Additional Details</label>
-                  <textarea
-                    className="w-full bg-blue-950/60 border border-blue-400/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-400"
-                    rows="4"
-                    placeholder="Tell us more about why this game would be great..."
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300"
-                >
-                  Submit Suggestion
-                </button>
-              </form>
-            </div>
-          </div>
-        )}
-      </main>
-
-      {/* Fullscreen Game Modal */}
-      {fullscreenGame && (
-        <FullscreenGame game={fullscreenGame} onClose={() => setFullscreenGame(null)} />
-      )}
-    </div>
-  );
-}
+</body>
+</html>
